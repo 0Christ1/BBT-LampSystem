@@ -102,13 +102,47 @@ const regionOptions = [
 
 const paymentLabel = '汇款/现金/Zelle/支票/汇票/银行本票';
 
+const getApplicationProfile = (lampType, planId) => {
+  if (lampType === 'wealth' && planId === 'company') {
+    return {
+      primaryField: 'companyName',
+      primaryLabel: '公司名字',
+      primaryPlaceholder: '请输入公司名字',
+      primaryError: '请填写公司名字',
+      showFamilyMembers: false,
+    };
+  }
+
+  if (lampType === 'wealth' && planId === 'great-patron') {
+    return {
+      primaryField: 'greatPatronName',
+      primaryLabel: '大功德主姓名',
+      primaryPlaceholder: '请输入大功德主姓名',
+      primaryError: '请填写大功德主姓名',
+      showFamilyMembers: false,
+    };
+  }
+
+  return {
+    primaryField: 'donorName',
+    primaryLabel: '点灯功德主姓名',
+    primaryPlaceholder: '请输入功德主姓名',
+    primaryError: '请填写点灯功德主姓名',
+    showFamilyMembers: lampType === 'peace' && planId === 'family',
+  };
+};
+
 const initialForm = {
   applicantName: '',
   dharmaName: '',
   birthday: '',
   region: 'usa',
-  contact: '',
+  email: '',
+  phone: '',
   donorName: '',
+  companyName: '',
+  greatPatronName: '',
+  familyMembers: '',
   paymentMethod: 'offline_transfer',
 };
 
@@ -192,6 +226,9 @@ function App() {
 
   const validateForm = () => {
     const nextErrors = {};
+    const profile = selectedInfo
+      ? getApplicationProfile(selectedInfo.lamp.id, selectedInfo.plan.id)
+      : null;
 
     if (!form.applicantName.trim()) {
       nextErrors.applicantName = '请填写姓名';
@@ -201,12 +238,18 @@ function App() {
       nextErrors.region = '请选择地区';
     }
 
-    if (!form.contact.trim()) {
-      nextErrors.contact = '请填写手机号码或电子邮箱';
+    if (!form.email.trim()) {
+      nextErrors.email = '请填写电子邮箱';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      nextErrors.email = '请填写有效的电子邮箱';
     }
 
-    if (!form.donorName.trim()) {
-      nextErrors.donorName = '请填写点灯功德主姓名';
+    if (profile && !form[profile.primaryField].trim()) {
+      nextErrors[profile.primaryField] = profile.primaryError;
+    }
+
+    if (profile?.showFamilyMembers && !form.familyMembers.trim()) {
+      nextErrors.familyMembers = '请填写家人名单';
     }
 
     setErrors(nextErrors);
@@ -287,7 +330,6 @@ function App() {
           <span className={step === 'intro' ? 'active' : ''}>介绍</span>
           <span className={step === 'form' ? 'active' : ''}>填写资料</span>
           <span className={step === 'notice' ? 'active' : ''}>通知</span>
-          <span className={step === 'login' ? 'active' : ''}>查询登录</span>
         </div>
       </div>
 
@@ -323,10 +365,7 @@ function App() {
       )}
 
       {step === 'login' && (
-        <LoginPage
-          onBack={() => setStep('intro')}
-          onNewApplication={resetFlow}
-        />
+        <LoginPage onBack={() => setStep('intro')} />
       )}
 
       {isPlanModalOpen && selectedLamp && (
@@ -509,6 +548,7 @@ function ApplicationForm({
   onBlessing,
 }) {
   const { lamp, plan } = selectedInfo;
+  const profile = getApplicationProfile(lamp.id, plan.id);
 
   return (
     <section className="form-page">
@@ -564,21 +604,49 @@ function ApplicationForm({
           </select>
         </Field>
 
-        <Field label="手机号码/电子邮箱" required error={errors.contact}>
+        <Field label="电子邮箱" required error={errors.email}>
           <input
-            value={form.contact}
-            onChange={(event) => updateForm('contact', event.target.value)}
-            placeholder="请输入手机号码或电子邮箱"
+            type="email"
+            value={form.email}
+            onChange={(event) => updateForm('email', event.target.value)}
+            placeholder="请输入电子邮箱"
           />
         </Field>
 
-        <Field label="点灯功德主姓名" required error={errors.donorName}>
+        <Field label="手机号码" error={errors.phone}>
           <input
-            value={form.donorName}
-            onChange={(event) => updateForm('donorName', event.target.value)}
-            placeholder="请输入功德主姓名"
+            type="tel"
+            value={form.phone}
+            onChange={(event) => updateForm('phone', event.target.value)}
+            placeholder="选填"
           />
         </Field>
+
+        <Field
+          label={profile.primaryLabel}
+          required
+          error={errors[profile.primaryField]}
+        >
+          <input
+            value={form[profile.primaryField]}
+            onChange={(event) =>
+              updateForm(profile.primaryField, event.target.value)
+            }
+            placeholder={profile.primaryPlaceholder}
+          />
+        </Field>
+
+        {profile.showFamilyMembers && (
+          <Field label="家人名单" required error={errors.familyMembers} wide>
+            <textarea
+              value={form.familyMembers}
+              onChange={(event) =>
+                updateForm('familyMembers', event.target.value)
+              }
+              placeholder="请逐行填写家人姓名，或以顿号、逗号分隔"
+            />
+          </Field>
+        )}
       </form>
 
       <section className="payment-section">
@@ -624,9 +692,9 @@ function ApplicationForm({
   );
 }
 
-function Field({ label, required = false, error = '', children }) {
+function Field({ label, required = false, error = '', children, wide = false }) {
   return (
-    <label className="field">
+    <label className={`field ${wide ? 'field-wide' : ''}`}>
       <span>
         {required && <b>*</b>}
         {label}
@@ -645,7 +713,8 @@ function ConfirmModal({
   onBack,
   onConfirm,
 }) {
-  const { plan } = selectedInfo;
+  const { lamp, plan } = selectedInfo;
+  const profile = getApplicationProfile(lamp.id, plan.id);
 
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
@@ -657,13 +726,27 @@ function ConfirmModal({
 
         <dl className="detail-list">
           <div>
-            <dt>点灯功德主</dt>
-            <dd>{form.donorName}</dd>
+            <dt>{profile.primaryLabel}</dt>
+            <dd>{form[profile.primaryField]}</dd>
           </div>
           <div>
             <dt>生日</dt>
             <dd>{form.birthday || '未填写'}</dd>
           </div>
+          <div>
+            <dt>电子邮箱</dt>
+            <dd>{form.email}</dd>
+          </div>
+          <div>
+            <dt>手机号码</dt>
+            <dd>{form.phone || '未填写'}</dd>
+          </div>
+          {profile.showFamilyMembers && (
+            <div>
+              <dt>家人名单</dt>
+              <dd>{form.familyMembers}</dd>
+            </div>
+          )}
           <div>
             <dt>功德金(美金)</dt>
             <dd>{currency.format(plan.amount)}</dd>
@@ -734,7 +817,7 @@ function NoticePage({ application, onNewApplication, onLogin }) {
   );
 }
 
-function LoginPage({ onBack, onNewApplication }) {
+function LoginPage({ onBack }) {
   const [loginForm, setLoginForm] = useState({
     applicationNo: '',
     contact: '',
@@ -788,13 +871,6 @@ function LoginPage({ onBack, onNewApplication }) {
           <div className="login-actions">
             <button className="ghost-button" type="button" onClick={onBack}>
               返回介绍
-            </button>
-            <button
-              className="ghost-button"
-              type="button"
-              onClick={onNewApplication}
-            >
-              继续申请
             </button>
             <button className="primary-button" type="submit">
               登录查询

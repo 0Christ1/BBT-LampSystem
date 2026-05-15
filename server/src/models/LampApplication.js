@@ -62,15 +62,41 @@ const lampApplicationSchema = new mongoose.Schema(
       required: true,
       enum: ["usa", "asia", "other"]
     },
-    contact: {
+    email: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      lowercase: true
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    contact: {
+      type: String,
+      trim: true,
+      default: ""
     },
     donorName: {
       type: String,
-      required: true,
-      trim: true
+      trim: true,
+      default: ""
+    },
+    companyName: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    greatPatronName: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    familyMembers: {
+      type: String,
+      trim: true,
+      default: ""
     },
     paymentMethod: {
       type: String,

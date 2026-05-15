@@ -36,6 +36,19 @@ app.use(
 app.use(express.json());
 app.use(morgan("dev"));
 
+app.get("/", (req, res) => {
+  res.json({
+    ok: true,
+    service: "BBT Lamp System API",
+    message: "API server is running. Use the /api routes below.",
+    routes: [
+      "GET /api/health",
+      "GET /api/lamp-options",
+      "POST /api/applications"
+    ]
+  });
+});
+
 app.use("/api/health", healthRoutes);
 app.use("/api/lamp-options", lampRoutes);
 app.use("/api/applications", applicationRoutes);
@@ -53,6 +66,17 @@ app.use((error, req, res, next) => {
 
 await connectDatabase();
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.info(`BBT Lamp System API running on http://localhost:${port}`);
+});
+
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(
+      `Port ${port} is already in use. Stop the existing server or set PORT to another value.`
+    );
+    process.exit(1);
+  }
+
+  throw error;
 });
