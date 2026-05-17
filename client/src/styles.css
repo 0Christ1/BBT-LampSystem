@@ -805,6 +805,7 @@ button:disabled {
 .login-page {
   display: grid;
   place-items: start center;
+  margin-top: 50px;
 }
 
 .login-panel {
