@@ -477,8 +477,13 @@ function IntroPage({
 
 function PlanModal({ lamp, onClose, onChoose }) {
   return (
-    <div className="modal-backdrop" role="dialog" aria-modal="true">
-      <div className="modal-card">
+    <div
+      className="modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+    >
+      <div className="modal-card" onClick={(event) => event.stopPropagation()}>
         <div className="modal-heading">
           <div>
             <p className="section-kicker">选择点灯项目</p>

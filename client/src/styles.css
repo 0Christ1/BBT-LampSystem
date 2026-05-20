@@ -114,7 +114,6 @@ button:disabled {
 
 .intro-page {
   display: grid;
-  gap: 22px;
 }
 
 .festival-hero {
@@ -339,11 +338,11 @@ button:disabled {
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
-  gap: 20px;
   align-items: center;
   padding: 22px 24px;
   border: 1px solid var(--line);
   background: var(--paper);
+  margin-top: 22px;
 }
 
 .action-band p,
@@ -367,6 +366,7 @@ button:disabled {
   flex-wrap: wrap;
   gap: 12px;
   justify-content: flex-end;
+  margin-top: 20px;
 }
 
 .primary-button,
