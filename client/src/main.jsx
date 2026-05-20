@@ -73,22 +73,22 @@ const lampStories = {
     title: '平安光明灯',
     eyebrow: '观音殿常明祈福',
     image: '/lamp-assets/peace-lamp.jpg',
-    lead: '为自己与家人点亮平安，祈愿身心安稳、家宅安宁、福寿吉祥。',
+    lead: '为自己与家人点亮平安灯，可消灾除厄、身心安稳、家宅安宁、福寿吉祥。',
     paragraphs: [
-      '佛前点灯，寓意破除黑暗、照耀前程。于本寺观音殿点上平安光明灯，愿点灯者日夜融汇在观世音菩萨的慈悲护佑之中。',
-      '诸佛菩萨圣诞及重要节日，本寺将带领大众诵经、修法、祈福，并将点灯功德回向点灯者及其眷属。',
+      '佛前点灯，寓意破除黑暗、照耀前程。于本寺观音殿点亮平安光明灯将日夜融汇在观世音菩萨的慈悲护佑之中。',
+      '于诸佛菩萨圣诞及重要节日，本寺将带领大众诵经、修法、祈福，并将点灯功德回向点灯者及其眷属。',
     ],
   },
   wealth: {
     title: '财富光明灯',
-    eyebrow: '南无财宝天王加持',
+    eyebrow: '财神殿昼夜加持',
     image: '/lamp-assets/wealth-lamp.jpg',
-    lead: '为事业、公司与个人财富资粮祈福，愿善缘增长、事业顺利、财源广进。',
+    lead: '为事业、公司与个人点亮财富光明灯，可使福报增长、财源广进、事业风生水起。',
     paragraphs: [
-      '财宝天王又名多闻天王，护持世间功德与福报转化，协助众生增长善法、财富及好运。',
-      '凡长年点灯者，日夜融汇在财宝天王的慈悲加持庇护之中，祈愿家和业兴、鸿图大展、求财满愿。',
+      '财宝天王又名多闻天王，管理世间功德与福报转化，使一切众生脱离贫困灾难，增长善法、财富、及好运。',
+      '凡长年点灯者，日夜融汇在财宝天王的慈悲加持庇护之中，事业顺利，鸿图大展，求财满愿。',
     ],
-    note: '大功德主名额有限，特制芳名牌将置于财富灯顶部。',
+    note: '大功德主名额仅限39位，特制芳名牌将置于财富灯最顶部 !',
   },
 };
 
@@ -434,7 +434,9 @@ function IntroPage({
                   />
                   <span>{lampStories[lamp.id].title}</span>
                 </label>
-                <span className="lamp-eyebrow">{lampStories[lamp.id].eyebrow}</span>
+                <span className="lamp-eyebrow">
+                  {lampStories[lamp.id].eyebrow}
+                </span>
               </div>
 
               <p className="lamp-lead">{lampStories[lamp.id].lead}</p>
