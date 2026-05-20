@@ -70,27 +70,25 @@ const fallbackLampOptions = [
 
 const lampStories = {
   peace: {
-    title: '「平安光明灯」',
-    subtitle: '美国慈行寺特设「平安光明灯」',
-    image: '/lamp-assets/peace-lamp.png',
+    title: '平安光明灯',
+    eyebrow: '观音殿常明祈福',
+    image: '/lamp-assets/peace-lamp.jpg',
+    lead: '为自己与家人点亮平安，祈愿身心安稳、家宅安宁、福寿吉祥。',
     paragraphs: [
-      '点灯可为自己及家人消灾除厄，祈愿平安健康、家宅安宁、福寿吉祥。',
-      '本寺观音殿点上平安光明灯，功德回向点灯者，愿离苦得乐、早证菩提。',
-      '灯是智慧和光明的象征，佛前点灯会使人获无尽福报，启无量智慧。',
+      '佛前点灯，寓意破除黑暗、照耀前程。于本寺观音殿点上平安光明灯，愿点灯者日夜融汇在观世音菩萨的慈悲护佑之中。',
+      '诸佛菩萨圣诞及重要节日，本寺将带领大众诵经、修法、祈福，并将点灯功德回向点灯者及其眷属。',
     ],
-    blessings: ['平安健康', '家宅安宁', '消灾除厄', '福寿吉祥'],
   },
   wealth: {
-    title: '「财富光明灯」',
-    subtitle: '美国慈行寺特设《南无财宝天王 财富光明灯》',
-    image: '/lamp-assets/wealth-lamp.png',
+    title: '财富光明灯',
+    eyebrow: '南无财宝天王加持',
+    image: '/lamp-assets/wealth-lamp.jpg',
+    lead: '为事业、公司与个人财富资粮祈福，愿善缘增长、事业顺利、财源广进。',
     paragraphs: [
       '财宝天王又名多闻天王，护持世间功德与福报转化，协助众生增长善法、财富及好运。',
-      '凡长年点灯者，日夜融汇在财宝天王的慈悲加持庇护之中，祈愿事业顺利、鸿图大展、求财满愿。',
-      '本寺长期为点灯功德主诵经、修法、祈福，并将点灯功德回向诸有情。',
+      '凡长年点灯者，日夜融汇在财宝天王的慈悲加持庇护之中，祈愿家和业兴、鸿图大展、求财满愿。',
     ],
-    blessings: ['事业顺利', '财源广进', '家和业兴', '求财满愿'],
-    note: '大功德主限量39盏，特制芳名牌将置于财富灯顶部。',
+    note: '大功德主名额有限，特制芳名牌将置于财富灯顶部。',
   },
 };
 
@@ -364,9 +362,7 @@ function App() {
         />
       )}
 
-      {step === 'login' && (
-        <LoginPage onBack={() => setStep('intro')} />
-      )}
+      {step === 'login' && <LoginPage onBack={() => setStep('intro')} />}
 
       {isPlanModalOpen && selectedLamp && (
         <PlanModal
@@ -402,7 +398,7 @@ function IntroPage({
     <section className="intro-page">
       <div className="festival-hero">
         <div>
-          <h2>佛前点灯，平安吉祥，财富光明</h2>
+          <h2>佛前点灯、平安吉祥、诸事光明</h2>
         </div>
         <p>
           光明灯象征智慧、愿力与福报。慈行寺广邀大众点灯祈福，
@@ -419,62 +415,38 @@ function IntroPage({
             key={lamp.id}
             onClick={() => setSelectedLampId(lamp.id)}
           >
+            <figure className="poster-frame">
+              <img
+                src={lampStories[lamp.id].image}
+                alt={`${lamp.label}实景照片`}
+              />
+            </figure>
+
             <div className="festival-card-copy">
-              <label className="lamp-radio">
-                <input
-                  type="radio"
-                  name="lampType"
-                  value={lamp.id}
-                  checked={selectedLampId === lamp.id}
-                  onChange={() => setSelectedLampId(lamp.id)}
-                />
-                <span>{lampStories[lamp.id].title}</span>
-              </label>
-              <h3>{lampStories[lamp.id].subtitle}</h3>
+              <div className="lamp-choice-header">
+                <label className="lamp-radio">
+                  <input
+                    type="radio"
+                    name="lampType"
+                    value={lamp.id}
+                    checked={selectedLampId === lamp.id}
+                    onChange={() => setSelectedLampId(lamp.id)}
+                  />
+                  <span>{lampStories[lamp.id].title}</span>
+                </label>
+                <span className="lamp-eyebrow">{lampStories[lamp.id].eyebrow}</span>
+              </div>
+
+              <p className="lamp-lead">{lampStories[lamp.id].lead}</p>
+
               {lampStories[lamp.id].paragraphs.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
 
-              <div className="blessing-tags">
-                {lampStories[lamp.id].blessings.map((item) => (
-                  <span key={item}>{item}</span>
-                ))}
-              </div>
-
-              <div className="festival-prices">
-                {lamp.plans.map((plan) => (
-                  <div key={plan.id}>
-                    <span>
-                      {plan.label}（{plan.duration}）
-                    </span>
-                    <strong>{currency.format(plan.amount)} / 每盏</strong>
-                  </div>
-                ))}
-              </div>
-
               {lampStories[lamp.id].note && (
                 <p className="lamp-note">{lampStories[lamp.id].note}</p>
               )}
-
-              <button
-                className="select-lamp-button"
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setSelectedLampId(lamp.id);
-                  openPlanModal();
-                }}
-              >
-                选择{lamp.shortLabel}
-              </button>
             </div>
-
-            <figure className="poster-frame">
-              <img
-                src={lampStories[lamp.id].image}
-                alt={`${lamp.label}宣传资料`}
-              />
-            </figure>
           </article>
         ))}
       </div>
@@ -692,7 +664,13 @@ function ApplicationForm({
   );
 }
 
-function Field({ label, required = false, error = '', children, wide = false }) {
+function Field({
+  label,
+  required = false,
+  error = '',
+  children,
+  wide = false,
+}) {
   return (
     <label className={`field ${wide ? 'field-wide' : ''}`}>
       <span>

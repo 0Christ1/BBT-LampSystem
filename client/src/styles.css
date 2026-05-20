@@ -147,17 +147,19 @@ button:disabled {
 
 .lamp-showcase {
   display: grid;
-  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
 }
 
 .festival-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.55fr);
-  gap: 24px;
-  padding: 24px;
+  gap: 0;
+  padding: 0;
   border: 2px solid rgba(215, 25, 24, 0.18);
   background: rgba(255, 250, 240, 0.96);
   box-shadow: 0 12px 35px rgba(116, 20, 12, 0.08);
+  cursor: pointer;
+  overflow: hidden;
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
@@ -173,7 +175,17 @@ button:disabled {
 
 .festival-card-copy {
   display: grid;
-  gap: 14px;
+  gap: 16px;
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.lamp-choice-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+  border-bottom: 1px solid rgba(215, 25, 24, 0.18);
+  padding-bottom: 14px;
 }
 
 .lamp-radio {
@@ -181,7 +193,7 @@ button:disabled {
   gap: 12px;
   align-items: center;
   color: var(--red);
-  font-size: clamp(22px, 3vw, 34px);
+  font-size: clamp(24px, 3vw, 36px);
   font-weight: 900;
 }
 
@@ -192,57 +204,27 @@ button:disabled {
   accent-color: var(--red);
 }
 
-.festival-card h3 {
-  margin: 0;
-  color: var(--ink);
-  font-size: clamp(20px, 2.5vw, 30px);
-  line-height: 1.25;
+.lamp-eyebrow {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  color: var(--deep-red);
+  background: #fff0d8;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.lamp-lead {
+  color: var(--deep-red) !important;
+  font-size: clamp(20px, 2.5vw, 28px) !important;
+  line-height: 1.35;
 }
 
 .festival-card p {
   margin: 0;
   color: #3d2924;
-  font-size: 17px;
-}
-
-.blessing-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.blessing-tags span {
-  padding: 7px 11px;
-  color: var(--deep-red);
-  border: 1px solid rgba(215, 25, 24, 0.22);
-  background: #fff0d8;
-  font-weight: 800;
-}
-
-.festival-prices {
-  display: grid;
-  gap: 8px;
-  padding: 16px;
-  border-left: 5px solid var(--red);
-  background: #fff4df;
-}
-
-.festival-prices div {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  align-items: baseline;
-}
-
-.festival-prices span {
-  color: var(--ink);
-  font-weight: 900;
-}
-
-.festival-prices strong {
-  color: var(--red);
   font-size: 20px;
-  white-space: nowrap;
+  font-weight: 800;
+  line-height: 1.65;
 }
 
 .lamp-note {
@@ -250,24 +232,9 @@ button:disabled {
   font-weight: 900;
 }
 
-.select-lamp-button {
-  width: fit-content;
-  min-height: 42px;
-  padding: 0 18px;
-  color: var(--white);
-  border: 1px solid var(--deep-red);
-  background: var(--deep-red);
-  font-weight: 800;
-}
-
-.select-lamp-button:hover {
-  background: var(--red);
-}
-
 .poster-frame {
-  align-self: stretch;
   margin: 0;
-  border: 1px solid var(--line);
+  aspect-ratio: 16 / 9;
   background: var(--white);
   overflow: hidden;
 }
@@ -276,9 +243,8 @@ button:disabled {
   display: block;
   width: 100%;
   height: 100%;
-  max-height: 620px;
   object-fit: cover;
-  object-position: top center;
+  object-position: center center;
 }
 
 .festival-action {
@@ -887,13 +853,18 @@ button:disabled {
   }
 
   .festival-hero,
-  .festival-card,
+  .lamp-showcase,
   .login-panel {
     grid-template-columns: 1fr;
   }
 
-  .poster-frame img {
-    max-height: 360px;
+  .lamp-choice-header {
+    display: grid;
+  }
+
+  .lamp-eyebrow {
+    width: fit-content;
+    white-space: normal;
   }
 
   .form-grid {
@@ -914,10 +885,6 @@ button:disabled {
   .notice-actions button,
   .login-actions button {
     flex: 1 1 100%;
-  }
-
-  .festival-prices div {
-    display: grid;
   }
 
   .plan-option,
