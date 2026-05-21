@@ -7,6 +7,6 @@ healthRoutes.get("/", (req, res) => {
   res.json({
     ok: true,
     service: "BBT Lamp System API",
-    database: isDatabaseConnected() ? "mongodb" : "memory"
+    storage: isDatabaseConnected() ? "mongodb" : "local-json"
   });
 });

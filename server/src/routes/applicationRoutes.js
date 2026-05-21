@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { findLampSelection } from "../data/lampOptions.js";
 import { generateApplicationNo } from "../services/applicationNumber.js";
-import { createApplication } from "../services/applicationStore.js";
+import {
+  createApplication,
+  findApplicationByLogin
+} from "../services/applicationStore.js";
 
 export const applicationRoutes = Router();
 
@@ -87,9 +90,83 @@ const validatePayload = (body) => {
   return { errors, selection, profile };
 };
 
+const toPlainApplication = (application) => {
+  if (typeof application?.toObject === "function") {
+    return application.toObject();
+  }
+
+  return application;
+};
+
+const serializeApplication = (application) => {
+  const record = toPlainApplication(application);
+  const profile = getApplicationProfile(record.lampType, record.planId);
+
+  return {
+    applicationNo: record.applicationNo,
+    lampType: record.lampType,
+    lampLabel: record.lampLabel,
+    planId: record.planId,
+    planLabel: record.planLabel,
+    duration: record.duration,
+    amount: record.amount,
+    currency: record.currency,
+    applicantName: record.applicantName,
+    dharmaName: record.dharmaName,
+    birthday: record.birthday,
+    region: record.region,
+    regionLabel: regionLabels[record.region],
+    email: record.email,
+    phone: record.phone,
+    contact: record.email,
+    donorName: record.donorName,
+    companyName: record.companyName,
+    greatPatronName: record.greatPatronName,
+    familyMembers: record.familyMembers,
+    primaryField: profile.primaryField,
+    primaryLabel: profile.primaryLabel,
+    primaryName: record[profile.primaryField],
+    paymentMethod: record.paymentMethod,
+    paymentLabel: paymentLabels[record.paymentMethod],
+    status: record.status,
+    createdAt: record.createdAt
+  };
+};
+
+applicationRoutes.post("/login", async (req, res, next) => {
+  try {
+    const applicationNo = clean(req.body.applicationNo).toUpperCase();
+    const contact = clean(req.body.contact);
+
+    if (!applicationNo || !contact) {
+      return res.status(400).json({
+        message: "请填写申请编号和登记时使用的邮箱或手机号码。"
+      });
+    }
+
+    const application = await findApplicationByLogin({
+      applicationNo,
+      contact
+    });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "未查询到点灯申请，请确认申请编号和联系方式是否正确。"
+      });
+    }
+
+    return res.json({
+      message: "查询成功。",
+      data: serializeApplication(application)
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 applicationRoutes.post("/", async (req, res, next) => {
   try {
-    const { errors, selection, profile } = validatePayload(req.body);
+    const { errors, selection } = validatePayload(req.body);
 
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({
@@ -99,7 +176,10 @@ applicationRoutes.post("/", async (req, res, next) => {
     }
 
     const { lamp, plan } = selection;
-    const applicationNo = await generateApplicationNo(plan.code);
+    const applicationNo = await generateApplicationNo({
+      lampType: lamp.id,
+      planCode: plan.code
+    });
 
     const application = await createApplication({
       applicationNo,
@@ -126,39 +206,9 @@ applicationRoutes.post("/", async (req, res, next) => {
       status: "pending_payment"
     });
 
-    const primaryName = application[profile.primaryField];
-
     return res.status(201).json({
       message: "点灯申请已成功提交。",
-      data: {
-        applicationNo: application.applicationNo,
-        lampType: application.lampType,
-        lampLabel: application.lampLabel,
-        planId: application.planId,
-        planLabel: application.planLabel,
-        duration: application.duration,
-        amount: application.amount,
-        currency: application.currency,
-        applicantName: application.applicantName,
-        dharmaName: application.dharmaName,
-        birthday: application.birthday,
-        region: application.region,
-        regionLabel: regionLabels[application.region],
-        email: application.email,
-        phone: application.phone,
-        contact: application.email,
-        donorName: application.donorName,
-        companyName: application.companyName,
-        greatPatronName: application.greatPatronName,
-        familyMembers: application.familyMembers,
-        primaryField: profile.primaryField,
-        primaryLabel: profile.primaryLabel,
-        primaryName,
-        paymentMethod: application.paymentMethod,
-        paymentLabel: paymentLabels[application.paymentMethod],
-        status: application.status,
-        createdAt: application.createdAt
-      }
+      data: serializeApplication(application)
     });
   } catch (error) {
     next(error);

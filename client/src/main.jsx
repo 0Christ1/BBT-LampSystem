@@ -808,15 +808,50 @@ function LoginPage({ onBack }) {
     contact: '',
   });
   const [message, setMessage] = useState('');
+  const [querying, setQuerying] = useState(false);
+  const [application, setApplication] = useState(null);
 
   const updateLoginForm = (field, value) => {
     setLoginForm((current) => ({ ...current, [field]: value }));
     setMessage('');
+    setApplication(null);
   };
 
-  const submitLogin = (event) => {
+  const submitLogin = async (event) => {
     event.preventDefault();
-    setMessage('登录查询功能将在后台管理和账号验证模块中开放。');
+    setMessage('');
+    setApplication(null);
+
+    if (!loginForm.applicationNo.trim() || !loginForm.contact.trim()) {
+      setMessage('请填写申请编号和登记时使用的邮箱或手机号码。');
+      return;
+    }
+
+    setQuerying(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/applications/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          applicationNo: loginForm.applicationNo,
+          contact: loginForm.contact,
+        }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || '查询失败，请稍后再试。');
+      }
+
+      setApplication(result.data);
+    } catch (error) {
+      setMessage(error.message || '查询失败，请稍后再试。');
+    } finally {
+      setQuerying(false);
+    }
   };
 
   return (
@@ -826,7 +861,7 @@ function LoginPage({ onBack }) {
           <p className="section-kicker">Lamp Inquiry</p>
           <h2>用户登录查询点灯</h2>
           <p>
-            后续这里会接入短信或邮件验证码，供点灯人查询申请状态、确认信和功德金缴交记录。
+            输入申请编号与登记时使用的电子邮箱或手机号码，即可查询点灯申请记录。
           </p>
         </div>
 
@@ -857,12 +892,64 @@ function LoginPage({ onBack }) {
             <button className="ghost-button" type="button" onClick={onBack}>
               返回介绍
             </button>
-            <button className="primary-button" type="submit">
-              登录查询
+            <button className="primary-button" type="submit" disabled={querying}>
+              {querying ? '查询中...' : '登录查询'}
             </button>
           </div>
         </form>
+
+        {application && <ApplicationRecord application={application} />}
       </div>
+    </section>
+  );
+}
+
+function ApplicationRecord({ application }) {
+  return (
+    <section className="application-record">
+      <div>
+        <p className="section-kicker">查询结果</p>
+        <h3>{application.applicationNo}</h3>
+      </div>
+
+      <dl className="detail-list">
+        <div>
+          <dt>点灯信息</dt>
+          <dd>
+            {application.lampLabel}-{application.planLabel}
+          </dd>
+        </div>
+        <div>
+          <dt>{application.primaryLabel}</dt>
+          <dd>{application.primaryName}</dd>
+        </div>
+        {application.familyMembers && (
+          <div>
+            <dt>家人名单</dt>
+            <dd>{application.familyMembers}</dd>
+          </div>
+        )}
+        <div>
+          <dt>功德金</dt>
+          <dd>{currency.format(application.amount)}</dd>
+        </div>
+        <div>
+          <dt>申请状态</dt>
+          <dd>
+            {application.status === 'pending_payment'
+              ? '待缴功德金'
+              : application.status}
+          </dd>
+        </div>
+        <div>
+          <dt>电子邮箱</dt>
+          <dd>{application.email}</dd>
+        </div>
+        <div>
+          <dt>手机号码</dt>
+          <dd>{application.phone || '未填写'}</dd>
+        </div>
+      </dl>
     </section>
   );
 }

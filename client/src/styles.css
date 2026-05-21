@@ -119,7 +119,7 @@ button:disabled {
 .festival-hero {
   display: flex;
   flex-wrap: wrap;
-  gap: 26px;
+  gap: 22px;
   align-items: end;
   padding: clamp(24px, 5vw, 54px);
   color: rgba(143, 23, 16, 0.98);
@@ -146,7 +146,6 @@ button:disabled {
 
 .lamp-showcase {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px;
 }
 
@@ -212,9 +211,10 @@ button:disabled {
 }
 
 .lamp-lead {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: var(--deep-red) !important;
   font-size: clamp(20px, 2.5vw, 28px) !important;
-  line-height: 1.35;
+  font-weight: 800;
 }
 
 .festival-card p {
@@ -366,7 +366,6 @@ button:disabled {
   flex-wrap: wrap;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 20px;
 }
 
 .primary-button,
@@ -381,6 +380,7 @@ button:disabled {
   padding: 0 24px;
   color: var(--white);
   background: var(--deep-red);
+  font-size: x-large;
 }
 
 .primary-button:hover {
@@ -396,6 +396,7 @@ button:disabled {
   color: var(--deep-red);
   border-color: var(--deep-red);
   background: transparent;
+  font-size: x-large;
 }
 
 .ghost-button:hover {
@@ -809,6 +810,22 @@ button:disabled {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-end;
+}
+
+.application-record {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid rgba(215, 25, 24, 0.22);
+  background: #fff4df;
+}
+
+.application-record h3 {
+  margin: 4px 0 0;
+  color: var(--red);
+  font-size: clamp(24px, 4vw, 38px);
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 760px) {

@@ -1,6 +1,6 @@
 import {
   applicationNoExists,
-  countApplicationsByPrefix
+  countApplicationsByYearAndLampType
 } from "./applicationStore.js";
 
 const pad = (value) => String(value).padStart(2, "0");
@@ -13,9 +13,14 @@ const formatDateCode = (date = new Date()) => {
   return `${year}${month}${day}`;
 };
 
-export const generateApplicationNo = async (planCode) => {
-  const prefix = `BBT${formatDateCode()}${planCode}`;
-  let sequence = (await countApplicationsByPrefix(prefix)) + 1;
+const formatYearCode = (date = new Date()) => String(date.getFullYear());
+
+export const generateApplicationNo = async ({ lampType, planCode }) => {
+  const now = new Date();
+  const dateCode = formatDateCode(now);
+  const yearCode = formatYearCode(now);
+  const prefix = `BBT${dateCode}${planCode}`;
+  let sequence = (await countApplicationsByYearAndLampType(yearCode, lampType)) + 1;
   let applicationNo = `${prefix}${String(sequence).padStart(3, "0")}`;
 
   while (await applicationNoExists(applicationNo)) {

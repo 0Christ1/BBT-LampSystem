@@ -44,7 +44,8 @@ app.get("/", (req, res) => {
     routes: [
       "GET /api/health",
       "GET /api/lamp-options",
-      "POST /api/applications"
+      "POST /api/applications",
+      "POST /api/applications/login"
     ]
   });
 });
